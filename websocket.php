@@ -1,53 +1,55 @@
 <?php
 /**
- * Класс WebSocket сервера
+ * РљР»Р°СЃСЃ WebSocket СЃРµСЂРІРµСЂР°
  */
 class WebSocketServer {
 
     /**
-     * Функция вызывается, когда получено сообщение от клиента
+     * Р¤СѓРЅРєС†РёСЏ РІС‹Р·С‹РІР°РµС‚СЃСЏ, РєРѕРіРґР° РїРѕР»СѓС‡РµРЅРѕ СЃРѕРѕР±С‰РµРЅРёРµ РѕС‚ РєР»РёРµРЅС‚Р°
      */
     public $handler;
 	public $startServerevent;
+	public $onDisconnect;
+	public $onConnect;
     /**
-     * IP адрес сервера
+     * IP Р°РґСЂРµСЃ СЃРµСЂРІРµСЂР°
      */
     private $ip;
     /**
-     * Порт сервера
+     * РџРѕСЂС‚ СЃРµСЂРІРµСЂР°
      */
     private $port;
     /**
-     * Сокет для принятия новых соединений, прослушивает указанный порт
+     * РЎРѕРєРµС‚ РґР»СЏ РїСЂРёРЅСЏС‚РёСЏ РЅРѕРІС‹С… СЃРѕРµРґРёРЅРµРЅРёР№, РїСЂРѕСЃР»СѓС€РёРІР°РµС‚ СѓРєР°Р·Р°РЅРЅС‹Р№ РїРѕСЂС‚
      */
     private $connection;
     /**
-     * Для хранения всех подключений, принятых слушающим сокетом
+     * Р”Р»СЏ С…СЂР°РЅРµРЅРёСЏ РІСЃРµС… РїРѕРґРєР»СЋС‡РµРЅРёР№, РїСЂРёРЅСЏС‚С‹С… СЃР»СѓС€Р°СЋС‰РёРј СЃРѕРєРµС‚РѕРј
      */
     private $connects;
 
     /**
-     * Ограничение по времени работы сервера
+     * РћРіСЂР°РЅРёС‡РµРЅРёРµ РїРѕ РІСЂРµРјРµРЅРё СЂР°Р±РѕС‚С‹ СЃРµСЂРІРµСЂР°
      */
     private $timeLimit = 0;
     /**
-     * Время начала работы сервера
+     * Р’СЂРµРјСЏ РЅР°С‡Р°Р»Р° СЂР°Р±РѕС‚С‹ СЃРµСЂРІРµСЂР°
      */
     private $startTime;
     /**
-     * Выводить сообщения в консоль?
+     * Р’С‹РІРѕРґРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ РІ РєРѕРЅСЃРѕР»СЊ?
      */
     private $verbose = false;
     /**
-     * Записывать сообщения в log-файл?
+     * Р—Р°РїРёСЃС‹РІР°С‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ РІ log-С„Р°Р№Р»?
      */
     private $logging = false;
     /**
-     * Имя log-файла
+     * РРјСЏ log-С„Р°Р№Р»Р°
      */
     private $logFile = 'ws-log.txt';
     /**
-     * Ресурс log-файла
+     * Р РµСЃСѓСЂСЃ log-С„Р°Р№Р»Р°
      */
     private $resource;
 
@@ -56,10 +58,10 @@ class WebSocketServer {
         $this->ip = $ip;
         $this->port = $port;
 
-        // эта функция вызывается, когда получено сообщение от клиента;
-        // при создании экземпляра класса должна быть переопределена
+        // СЌС‚Р° С„СѓРЅРєС†РёСЏ РІС‹Р·С‹РІР°РµС‚СЃСЏ, РєРѕРіРґР° РїРѕР»СѓС‡РµРЅРѕ СЃРѕРѕР±С‰РµРЅРёРµ РѕС‚ РєР»РёРµРЅС‚Р°;
+        // РїСЂРё СЃРѕР·РґР°РЅРёРё СЌРєР·РµРјРїР»СЏСЂР° РєР»Р°СЃСЃР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅР°
         $this->handler = function($self,$connection, $data) {
-            $message = '[' . date('r') . '] Получено сообщение от клиента: ' . $data . PHP_EOL;
+            $message = '[' . date('r') . '] РџРѕР»СѓС‡РµРЅРѕ СЃРѕРѕР±С‰РµРЅРёРµ РѕС‚ РєР»РёРµРЅС‚Р°: ' . $data . PHP_EOL;
             if ($this->verbose) {
                 echo $message;
             }
@@ -79,7 +81,7 @@ class WebSocketServer {
     }
 
     /**
-     * Дополнительные настройки для отладки
+     * Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё РґР»СЏ РѕС‚Р»Р°РґРєРё
      */
     public function settings($timeLimit = 0, $verbose = false, $logging = false, $logFile = 'ws-log.txt') {
         $this->timeLimit = $timeLimit;
@@ -92,7 +94,7 @@ class WebSocketServer {
     }
 
     /**
-     * Выводит сообщение в консоль и/или записывает в лог-файл
+     * Р’С‹РІРѕРґРёС‚ СЃРѕРѕР±С‰РµРЅРёРµ РІ РєРѕРЅСЃРѕР»СЊ Рё/РёР»Рё Р·Р°РїРёСЃС‹РІР°РµС‚ РІ Р»РѕРі-С„Р°Р№Р»
      */
     private function debug($message) {
         $message = '[' . date('r') . '] ' . $message . PHP_EOL;
@@ -105,14 +107,14 @@ class WebSocketServer {
     }
 
     /**
-     * Отправляет сообщение клиенту
+     * РћС‚РїСЂР°РІР»СЏРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РєР»РёРµРЅС‚Сѓ
      */
     public static function response($connect, $data) {
         socket_write($connect, self::encode($data));
     }
 
     /**
-     * Запускает сервер в работу
+     * Р—Р°РїСѓСЃРєР°РµС‚ СЃРµСЂРІРµСЂ РІ СЂР°Р±РѕС‚Сѓ
      */
     public function startServer() {
 
@@ -125,20 +127,20 @@ class WebSocketServer {
             return;
         }
 
-        $bind = socket_bind($this->connection, $this->ip, $this->port); // привязываем к ip и порту
+        $bind = socket_bind($this->connection, $this->ip, $this->port); // РїСЂРёРІСЏР·С‹РІР°РµРј Рє ip Рё РїРѕСЂС‚Сѓ
         if (false === $bind) {
             $this->debug('Error socket_bind(): ' . socket_strerror(socket_last_error()));
             return;
         }
 
-        // разрешаем использовать один порт для нескольких соединений
+        // СЂР°Р·СЂРµС€Р°РµРј РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РѕРґРёРЅ РїРѕСЂС‚ РґР»СЏ РЅРµСЃРєРѕР»СЊРєРёС… СЃРѕРµРґРёРЅРµРЅРёР№
         $option = socket_set_option($this->connection, SOL_SOCKET, SO_REUSEADDR, 1);
         if (false === $option) {
             $this->debug('Error socket_set_option(): ' . socket_strerror(socket_last_error()));
             return;
         }
 
-        $listen = socket_listen($this->connection); // слушаем сокет
+        $listen = socket_listen($this->connection); // СЃР»СѓС€Р°РµРј СЃРѕРєРµС‚
         if (false === $listen) {
             $this->debug('Error socket_listen(): ' . socket_strerror(socket_last_error()));
             return;
@@ -155,52 +157,59 @@ class WebSocketServer {
 
             $this->debug('Waiting for connections...');
 
-            // создаем копию массива, так что массив $this->connects не будет изменен функцией socket_select()
+            // СЃРѕР·РґР°РµРј РєРѕРїРёСЋ РјР°СЃСЃРёРІР°, С‚Р°Рє С‡С‚Рѕ РјР°СЃСЃРёРІ $this->connects РЅРµ Р±СѓРґРµС‚ РёР·РјРµРЅРµРЅ С„СѓРЅРєС†РёРµР№ socket_select()
             $read = $this->connects;
             $write = $except = null;
 
             /*
-             * Сокет $this->connection только прослушивает порт на предмет новых соединений. Как только поступило
-             * новое соединение, мы создаем новый ресурс сокета с помощью socket_accept() и помещаем его в массив
-             * $this->connects для дальнейшего чтения из него.
+             * РЎРѕРєРµС‚ $this->connection С‚РѕР»СЊРєРѕ РїСЂРѕСЃР»СѓС€РёРІР°РµС‚ РїРѕСЂС‚ РЅР° РїСЂРµРґРјРµС‚ РЅРѕРІС‹С… СЃРѕРµРґРёРЅРµРЅРёР№. РљР°Рє С‚РѕР»СЊРєРѕ РїРѕСЃС‚СѓРїРёР»Рѕ
+             * РЅРѕРІРѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ, РјС‹ СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЂРµСЃСѓСЂСЃ СЃРѕРєРµС‚Р° СЃ РїРѕРјРѕС‰СЊСЋ socket_accept() Рё РїРѕРјРµС‰Р°РµРј РµРіРѕ РІ РјР°СЃСЃРёРІ
+             * $this->connects РґР»СЏ РґР°Р»СЊРЅРµР№С€РµРіРѕ С‡С‚РµРЅРёСЏ РёР· РЅРµРіРѕ.
              */
 
-            if ( ! socket_select($read, $write, $except, null)) { // ожидаем сокеты, доступные для чтения (без таймаута)
+            if ( ! socket_select($read, $write, $except, null)) { // РѕР¶РёРґР°РµРј СЃРѕРєРµС‚С‹, РґРѕСЃС‚СѓРїРЅС‹Рµ РґР»СЏ С‡С‚РµРЅРёСЏ (Р±РµР· С‚Р°Р№РјР°СѓС‚Р°)
                 break;
             }
 
-            // если слушающий сокет есть в массиве чтения, значит было новое соединение
+            // РµСЃР»Рё СЃР»СѓС€Р°СЋС‰РёР№ СЃРѕРєРµС‚ РµСЃС‚СЊ РІ РјР°СЃСЃРёРІРµ С‡С‚РµРЅРёСЏ, Р·РЅР°С‡РёС‚ Р±С‹Р»Рѕ РЅРѕРІРѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ
             if (in_array($this->connection, $read)) {
-                // принимаем новое соединение и производим рукопожатие
+                // РїСЂРёРЅРёРјР°РµРј РЅРѕРІРѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ Рё РїСЂРѕРёР·РІРѕРґРёРј СЂСѓРєРѕРїРѕР¶Р°С‚РёРµ
                 if (($connect = socket_accept($this->connection)) && $this->handshake($connect)) {
                     $this->debug('New connection accepted');
-                    $this->connects[] = $connect; // добавляем его в список необходимых для обработки
+					if (is_callable($this->onConnect)) {
+						call_user_func($this->onConnect,$this,$connect);
+					}
+					
+                    $this->connects[] = $connect; // РґРѕР±Р°РІР»СЏРµРј РµРіРѕ РІ СЃРїРёСЃРѕРє РЅРµРѕР±С…РѕРґРёРјС‹С… РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё
                 }
-                // удаляем слушающий сокет из массива для чтения
+                // СѓРґР°Р»СЏРµРј СЃР»СѓС€Р°СЋС‰РёР№ СЃРѕРєРµС‚ РёР· РјР°СЃСЃРёРІР° РґР»СЏ С‡С‚РµРЅРёСЏ
                 unset($read[ array_search($this->connection, $read) ]);
             }
 
-            foreach ($read as $connect) { // обрабатываем все соединения, в которых есть данные для чтения
+            foreach ($read as $connect) { // РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РІСЃРµ СЃРѕРµРґРёРЅРµРЅРёСЏ, РІ РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ РґР°РЅРЅС‹Рµ РґР»СЏ С‡С‚РµРЅРёСЏ
                 $data = socket_read($connect, 100000);
                 $decoded = self::decode($data);
-                // если клиент не прислал данных или хочет разорвать соединение
+                // РµСЃР»Рё РєР»РёРµРЅС‚ РЅРµ РїСЂРёСЃР»Р°Р» РґР°РЅРЅС‹С… РёР»Рё С…РѕС‡РµС‚ СЂР°Р·РѕСЂРІР°С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ
                 if (false === $decoded || 'close' === $decoded['type']) {
                     $this->debug('Connection closing');
                     socket_write($connect, self::encode('  Closed on client demand', 'close'));
                     socket_shutdown($connect);
                     socket_close($connect);
+					if (is_callable($this->onDisconnect)) {
+						call_user_func($this->onDisconnect,$this,$connect);
+					}
                     unset($this->connects[ array_search($connect, $this->connects) ]);
                     $this->debug('Closed successfully');
                     continue;
                 }
-                // получено сообщение от клиента, вызываем пользовательскую
-                // функцию, чтобы обработать полученные данные
+                // РїРѕР»СѓС‡РµРЅРѕ СЃРѕРѕР±С‰РµРЅРёРµ РѕС‚ РєР»РёРµРЅС‚Р°, РІС‹Р·С‹РІР°РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєСѓСЋ
+                // С„СѓРЅРєС†РёСЋ, С‡С‚РѕР±С‹ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РїРѕР»СѓС‡РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ
                 if (is_callable($this->handler)) {
                     call_user_func($this->handler,$this ,$connect, $decoded['payload']);
                 }
             }
 
-            // если истекло ограничение по времени, останавливаем сервер
+            // РµСЃР»Рё РёСЃС‚РµРєР»Рѕ РѕРіСЂР°РЅРёС‡РµРЅРёРµ РїРѕ РІСЂРµРјРµРЅРё, РѕСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃРµСЂРІРµСЂ
             if ($this->timeLimit && time() - $this->startTime > $this->timeLimit) {
                 //$this->debug('Time limit. Stopping server.');
                 //$this->StopServer();
@@ -212,12 +221,12 @@ class WebSocketServer {
     }
 
     /**
-     * Останавливает работу сервера
+     * РћСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СЂР°Р±РѕС‚Сѓ СЃРµСЂРІРµСЂР°
      */
     public function stopServer() {
-        // закрываем слушающий сокет
+        // Р·Р°РєСЂС‹РІР°РµРј СЃР»СѓС€Р°СЋС‰РёР№ СЃРѕРєРµС‚
         socket_close($this->connection);
-        if (!empty($this->connects)) { // отправляем все клиентам сообщение о разрыве соединения
+        if (!empty($this->connects)) { // РѕС‚РїСЂР°РІР»СЏРµРј РІСЃРµ РєР»РёРµРЅС‚Р°Рј СЃРѕРѕР±С‰РµРЅРёРµ Рѕ СЂР°Р·СЂС‹РІРµ СЃРѕРµРґРёРЅРµРЅРёСЏ
             foreach ($this->connects as $connect) {
                 if (is_resource($connect)) {
                     socket_write($connect, self::encode('  Closed on server demand', 'close'));
@@ -229,7 +238,7 @@ class WebSocketServer {
     }
 
     /**
-     * Для кодирования сообщений перед отправкой клиенту
+     * Р”Р»СЏ РєРѕРґРёСЂРѕРІР°РЅРёСЏ СЃРѕРѕР±С‰РµРЅРёР№ РїРµСЂРµРґ РѕС‚РїСЂР°РІРєРѕР№ РєР»РёРµРЅС‚Сѓ
      */
     private static function encode($payload, $type = 'text', $masked = false) {
         $frameHead = array();
@@ -297,7 +306,7 @@ class WebSocketServer {
     }
 
     /**
-     * Для декодирования сообщений, полученных от клиента
+     * Р”Р»СЏ РґРµРєРѕРґРёСЂРѕРІР°РЅРёСЏ СЃРѕРѕР±С‰РµРЅРёР№, РїРѕР»СѓС‡РµРЅРЅС‹С… РѕС‚ РєР»РёРµРЅС‚Р°
      */
     private static function decode($data) {
         if ( ! strlen($data)) {
@@ -388,7 +397,7 @@ class WebSocketServer {
     }
 
     /**
-     * «Рукопожатие», т.е. отправка заголовков согласно протоколу WebSocket
+     * В«Р СѓРєРѕРїРѕР¶Р°С‚РёРµВ», С‚.Рµ. РѕС‚РїСЂР°РІРєР° Р·Р°РіРѕР»РѕРІРєРѕРІ СЃРѕРіР»Р°СЃРЅРѕ РїСЂРѕС‚РѕРєРѕР»Сѓ WebSocket
      */
     private function handshake($connect) {
 
@@ -409,7 +418,7 @@ class WebSocketServer {
             if (empty(trim($line))) break;
         }
 
-        // получаем адрес клиента
+        // РїРѕР»СѓС‡Р°РµРј Р°РґСЂРµСЃ РєР»РёРµРЅС‚Р°
         $ip = $port = null;
         if ( ! socket_getpeername($connect, $ip, $port)) {
             return false;
@@ -421,7 +430,7 @@ class WebSocketServer {
             return false;
         }
 
-        // отправляем заголовок согласно протоколу вебсокета
+        // РѕС‚РїСЂР°РІР»СЏРµРј Р·Р°РіРѕР»РѕРІРѕРє СЃРѕРіР»Р°СЃРЅРѕ РїСЂРѕС‚РѕРєРѕР»Сѓ РІРµР±СЃРѕРєРµС‚Р°
         $SecWebSocketAccept = 
             base64_encode(pack('H*', sha1($info['Sec-WebSocket-Key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
         $upgrade = "HTTP/1.1 101 Web Socket Protocol Handshake\r\n" .
