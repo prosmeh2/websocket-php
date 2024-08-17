@@ -22,6 +22,14 @@ $server->handler = function($self,$connect, $data) {
 $server->startServerevent= function($self){
 
 };
+//creating a function for socket disconnection events
+$server->onDisconnect = function($self,$socket){
+
+};
+//creating a function for socket connection events
+$server->onConnect = function($self,$socket){
+
+};
 //startserver
 $server->startServer();
 //if something goes wrong, messages are written
