@@ -45,7 +45,7 @@ function addserverphp(){//the function that starts the server and if it is runni
 }
 addserverphp();
 const socket = new WebSocket("ws://localhost:8000");//connect websocket
-socket.addEventListener("message", (event) => {//send msg
+socket.addEventListener("message", (event) => {//listen msg
   console.log("Message from server ", event.data);
 });
 ```
