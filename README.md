@@ -1,5 +1,6 @@
 # websocket-php
 This library doesn't weigh much.<br>
+Echo server<br>
 ```php
 <?php
 //setting unlimited time for uninterrupted script operation
@@ -26,4 +27,17 @@ $server->startServer();
 //if something goes wrong, messages are written
 echo "yestserver"
 ?>
+```
+client js<br>
+```javascript
+function addserverphp(){//the function that starts the server and if it is running it does nothing
+	const xhr = new XMLHttpRequest();
+	xhr.open("GET", "/serverphp/serverstart.php");//here we specify the file to the php server
+	xhr.send();	
+}
+addserverphp();
+const socket = new WebSocket("ws://localhost:8000");//connect websocket
+socket.addEventListener("message", (event) => {//send msg
+  console.log("Message from server ", event.data);
+});
 ```
