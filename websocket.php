@@ -176,11 +176,10 @@ class WebSocketServer {
                 // принимаем новое соединение и производим рукопожатие
                 if (($connect = socket_accept($this->connection)) && $this->handshake($connect)) {
                     $this->debug('New connection accepted');
+                    $this->connects[] = $connect; // добавляем его в список необходимых для обработки
 					if (is_callable($this->onConnect)) {
 						call_user_func($this->onConnect,$this,$connect);
 					}
-					
-                    $this->connects[] = $connect; // добавляем его в список необходимых для обработки
                 }
                 // удаляем слушающий сокет из массива для чтения
                 unset($read[ array_search($this->connection, $read) ]);
